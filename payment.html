@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paiement sécurisé — PlanNGo</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #F5A623;
+      --orange-dark: #D4891A;
+      --bg: #0F0F0F;
+      --surface: #1A1A1A;
+      --surface2: #242424;
+      --border: rgba(255,255,255,0.08);
+      --text: #F0EDE8;
+      --muted: #888;
+      --success: #4CAF7D;
+      --error: #FF5C5C;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-image: radial-gradient(ellipse at 20% 50%, rgba(245,166,35,0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, rgba(245,166,35,0.04) 0%, transparent 50%);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--orange);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .brand-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-name span { color: var(--orange); }
+
+    .amount-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .amount-label {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .amount-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--orange);
+    }
+
+    .amount-currency {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 14px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus {
+      border-color: var(--orange);
+    }
+
+    .field input::placeholder { color: #555; }
+
+    .stripe-field {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border-color 0.2s;
+    }
+
+    .stripe-field.focused { border-color: var(--orange); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    .pay-btn {
+      width: 100%;
+      background: var(--orange);
+      color: #000;
+      border: none;
+      border-radius: 14px;
+      padding: 18px;
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pay-btn:hover:not(:disabled) {
+      background: var(--orange-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(245,166,35,0.35);
+    }
+
+    .pay-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .pay-btn .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .pay-btn.loading .spinner { display: block; }
+    .pay-btn.loading .btn-text { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: rgba(255,92,92,0.1);
+      border: 1px solid rgba(255,92,92,0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--error);
+      margin-top: 16px;
+      display: none;
+    }
+
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+      animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: rgba(76,175,125,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 32px;
+    }
+
+    .success-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .success-sub {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .secure-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .secure-badge svg { opacity: 0.5; }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <div id="payment-form">
+    <div class="brand">
+      <div class="brand-icon">🎟</div>
+      <div class="brand-name">Plan<span>N</span>Go</div>
+    </div>
+
+    <div class="amount-box">
+      <div>
+        <div class="amount-label">Total à payer</div>
+      </div>
+      <div>
+        <span class="amount-value" id="display-amount">—</span>
+        <span class="amount-currency" id="display-currency">TND</span>
+      </div>
+    </div>
+
+    <div class="section-title">Informations de carte</div>
+
+    <div class="field">
+      <label>Titulaire de la carte</label>
+      <input type="text" id="cardholder" placeholder="Nom complet" autocomplete="cc-name"/>
+    </div>
+
+    <div class="field">
+      <label>Numéro de carte</label>
+      <div class="stripe-field" id="card-number-element"></div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Expiration</label>
+        <div class="stripe-field" id="card-expiry-element"></div>
+      </div>
+      <div class="field">
+        <label>CVC</label>
+        <div class="stripe-field" id="card-cvc-element"></div>
+      </div>
+    </div>
+
+    <button class="pay-btn" id="pay-btn" onclick="handlePayment()">
+      <span class="btn-text">🔒 Payer maintenant</span>
+      <div class="spinner"></div>
+    </button>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <div class="secure-badge">
+      <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+        <path d="M6 0L0 2.5V7C0 10.55 2.56 13.87 6 14C9.44 13.87 12 10.55 12 7V2.5L6 0Z" fill="white"/>
+      </svg>
+      Paiement sécurisé par Stripe
+    </div>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Paiement réussi !</div>
+    <p class="success-sub">Votre réservation est confirmée.<br>Vous recevrez un email de confirmation.</p>
+  </div>
+
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const clientSecret = params.get('secret');
+  const amount = params.get('amount');
+  const currency = (params.get('currency') || 'TND').toUpperCase();
+  const pk = params.get('pk');
+
+  // Display amount
+  if (amount) {
+    const display = (parseInt(amount) / 100).toFixed(0);
+    document.getElementById('display-amount').textContent = display;
+  }
+  document.getElementById('display-currency').textContent = currency;
+
+  // Init Stripe
+  const stripe = Stripe(pk || 'pk_test_51TPidU96Ec08yuRWyDdK4Wchc8qkl22r1va0IWOAT7VYOxZWPufbnuVJvJLx5hpM3xudeGrPjJGqFqiQeIsU0MT6OODYTiUKI3');
+  const elements = stripe.elements({ locale: 'fr' });
+
+  const style = {
+    base: {
+      color: '#F0EDE8',
+      fontFamily: "'DM Sans', sans-serif",
+      fontSize: '15px',
+      '::placeholder': { color: '#555' },
+    },
+    invalid: { color: '#FF5C5C' }
+  };
+
+  const cardNumber = elements.create('cardNumber', { style });
+  const cardExpiry = elements.create('cardExpiry', { style });
+  const cardCvc = elements.create('cardCvc', { style });
+
+  cardNumber.mount('#card-number-element');
+  cardExpiry.mount('#card-expiry-element');
+  cardCvc.mount('#card-cvc-element');
+
+  // Focus border highlight
+  [cardNumber, cardExpiry, cardCvc].forEach((el, i) => {
+    const ids = ['card-number-element','card-expiry-element','card-cvc-element'];
+    el.on('focus', () => document.getElementById(ids[i]).classList.add('focused'));
+    el.on('blur',  () => document.getElementById(ids[i]).classList.remove('focused'));
+  });
+
+  async function handlePayment() {
+    const btn = document.getElementById('pay-btn');
+    const errDiv = document.getElementById('error-msg');
+    errDiv.style.display = 'none';
+
+    if (!clientSecret) {
+      showError('Erreur : session de paiement invalide.');
+      return;
+    }
+
+    const cardholder = document.getElementById('cardholder').value.trim();
+    if (!cardholder) {
+      showError('Veuillez entrer le nom du titulaire de la carte.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: cardNumber,
+        billing_details: { name: cardholder }
+      }
+    });
+
+    btn.disabled = false;
+    btn.classList.remove('loading');
+
+    if (error) {
+      showError(error.message);
+    } else if (paymentIntent.status === 'succeeded') {
+      document.getElementById('payment-form').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>
