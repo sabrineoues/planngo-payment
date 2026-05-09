@@ -11,9 +11,9 @@
     :root {
       --orange: #F5A623;
       --orange-dark: #D4891A;
-      --bg: #0F0F0F;
+      --bg: #e3cccc;
       --surface: #1A1A1A;
-      --surface2: #242424;
+      --surface2: #f3eaea;
       --border: rgba(255,255,255,0.08);
       --text: #F0EDE8;
       --muted: #888;
@@ -356,7 +356,7 @@
   document.getElementById('display-currency').textContent = currency;
 
   // Init Stripe
-  const stripe = Stripe(pk || 'pk_test_51TPidU96Ec08yuRWyDdK4Wchc8qkl22r1va0IWOAT7VYOxZWPufbnuVJvJLx5hpM3xudeGrPjJGqFqiQeIsU0MT6OODYTiUKI3');
+  const stripe = Stripe('pk_test_51TPidU96Ec08yuRWyDdK4Wchc8qkl22r1va0IWOAT7VYOxZWPufbnuVJvJLx5hpM3xudeGrPjJGqFqiQeIsU0MT6OODYTiUKI3');
   const elements = stripe.elements({ locale: 'fr' });
 
   const style = {
