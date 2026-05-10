@@ -346,8 +346,6 @@
   const clientSecret = params.get('secret');
   const amount = params.get('amount');
   const currency = (params.get('currency') || 'TND').toUpperCase();
-  const pk = params.get('pk');
-
   // Display amount
   if (amount) {
     const display = parseFloat(amount).toFixed(2);
@@ -356,8 +354,7 @@
   document.getElementById('display-currency').textContent = currency;
 
   // Init Stripe
-const stripe = Stripe(pk || 'pk_test_51TPidU96Ec08yuRWyDdK4Wchc8qkl22r1va0IWOAT7VYOxZWPufbnuVJvJLx5hpM3xudeGrPjJGqFqiQeIsU0MT6OODYTiUKI3');  const elements = stripe.elements({ locale: 'fr' });
-
+const stripe = Stripe('pk_test_51TPidU96Ec08yuRWyDdK4Wchc8qkl22r1va0IWOAT7VYOxZWPufbnuVJvJLx5hpM3xudeGrPjJGqFqiQeIsU0MT6OODYTiUKI3');
   const style = {
     base: {
       color: '#F0EDE8',
