@@ -356,8 +356,7 @@
   document.getElementById('display-currency').textContent = currency;
 
   // Init Stripe
-  const stripe = Stripe('pk_test_51TPidU96Ec08yuRWyDdK4Wchc8qkl22r1va0IWOAT7VYOxZWPufbnuVJvJLx5hpM3xudeGrPjJGqFqiQeIsU0MT6OODYTiUKI3');
-  const elements = stripe.elements({ locale: 'fr' });
+const stripe = Stripe(pk || 'pk_test_51TPidU96Ec08yuRWyDdK4Wchc8qkl22r1va0IWOAT7VYOxZWPufbnuVJvJLx5hpM3xudeGrPjJGqFqiQeIsU0MT6OODYTiUKI3');  const elements = stripe.elements({ locale: 'fr' });
 
   const style = {
     base: {
