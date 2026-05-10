@@ -350,7 +350,7 @@
 
   // Display amount
   if (amount) {
-    const display = (parseInt(amount) / 100).toFixed(0);
+    const display = parseFloat(amount).toFixed(2);
     document.getElementById('display-amount').textContent = display;
   }
   document.getElementById('display-currency').textContent = currency;
